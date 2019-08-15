@@ -1,10 +1,12 @@
 package com.company.Client;
 
-import java.io.BufferedReader;
+import com.company.Server.Command;
+import com.company.Server.Message;
+import com.company.util.JSONParser;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
@@ -39,11 +41,19 @@ public class ClientMain {
                     if(clientName.equalsIgnoreCase(":changeLogin")) {clientName = ""; continue;}
                     String loginAnswer = ois.readUTF();
                     System.out.println(loginAnswer);
-                    if(loginAnswer.equals("Failed to login")) continue;
+                    if(loginAnswer.equals("Failed to login")) {clientName = ""; continue;}
                     String command = "";
                     do{
-                        command = console_in.nextLine();
-                        oos.writeUTF(command);
+                        command = console_in.nextLine().trim();
+                        Command cm = Command.MESSAGE;
+                        int argument;
+                        if (command.startsWith(":delete")) cm = Command.DELETE;
+                        else if (command.startsWith(":changeLogin")) cm = Command.CHANGE_LOGIN;
+                        else if (command.startsWith(":quit")) cm = Command.CHANGE_LOGIN;
+                        else if (command.startsWith(":show")) cm = Command.SHOW;
+                        else cm = Command.MESSAGE;
+                        Message ms = new Message(clientName, command, cm);
+                        oos.writeUTF(JSONParser.toJson(ms));
                         System.out.println(ois.readUTF());
                     } while(!(command.trim().equals(":changeLogin") || command.trim().equals(":quit")));
                     if(command.equalsIgnoreCase(":quit")){
