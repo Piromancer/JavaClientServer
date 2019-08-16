@@ -53,6 +53,7 @@ public class JSONParser {
                     case "DELETE": {result.setCommand(Command.DELETE); break;}
                     case "CHANGE_LOGIN": {result.setCommand(Command.CHANGE_LOGIN); break;}
                     case "QUIT": {result.setCommand(Command.QUIT); break;}
+                    case "TRANSFER_FILE": {result.setCommand(Command.TRANSFER_FILE); break;}
                     case "MESSAGE": {result.setCommand(Command.MESSAGE); break;}
                 }
             }

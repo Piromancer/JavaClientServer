@@ -6,6 +6,7 @@ import com.company.util.JSONParser;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -46,13 +47,24 @@ public class ClientMain {
                     do{
                         command = console_in.nextLine().trim();
                         Command cm;
-                        if (command.startsWith(":delete")) cm = Command.DELETE;
+                        if (command.startsWith(":delete")) {
+                            if(command.split(" ").length != 2) {
+                                System.out.println("No delete argument found");
+                                continue;
+                            }
+                            cm = Command.DELETE;
+                        }
                         else if (command.startsWith(":changeLogin")) cm = Command.CHANGE_LOGIN;
                         else if (command.startsWith(":quit")) cm = Command.CHANGE_LOGIN;
                         else if (command.startsWith(":show")) cm = Command.SHOW;
+                        else if (command.startsWith(":transferFile")) cm = Command.TRANSFER_FILE;
                         else cm = Command.MESSAGE;
                         Message ms = new Message(clientName, command, cm);
                         oos.writeUTF(JSONParser.toJson(ms));
+                        if (command.startsWith(":transferFile")) {
+                            File f = new File(command.split(" ")[1].trim());
+                            FileTransferer.transferFile(45778, f);
+                        }
                         System.out.println(ois.readUTF());
                     } while(!(command.trim().equals(":changeLogin") || command.trim().equals(":quit")));
                     if(command.equalsIgnoreCase(":quit")){

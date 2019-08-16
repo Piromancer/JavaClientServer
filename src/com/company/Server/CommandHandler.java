@@ -1,8 +1,11 @@
 package com.company.Server;
 
 
+import com.company.Client.FileTransferer;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
@@ -18,7 +21,9 @@ public class CommandHandler {
 
     public Map<String, ArrayList<String>> resolve(Message ms, DataOutputStream dos){
         int pos = -1;
+        String file_to_trans = "";
         if(ms.getText().split(" ").length == 2 && (new Scanner(ms.getText().split(" ")[1]).hasNextInt())) pos = Integer.parseInt(ms.getText().split(" ")[1]);
+        else if(ms.getText().split(" ").length == 2 && ms.getText().startsWith(":transferFile")) {file_to_trans = ms.getText().split(" ")[1];}
         String reservedMsg = ms.getText();
         Command command = ms.getCommand();
         switch (command){
@@ -34,12 +39,12 @@ public class CommandHandler {
                 return fullmap;
             }
             case DELETE:{
-                if (pos - 1 > messages.size() || pos < 0){
+                if (pos >= messages.size() || pos < 0){
                     try {
                         dos.writeUTF("No such id");
                         return fullmap;
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        System.out.println("Connection not found");
                     }
                 }
                 messages.remove(pos);
@@ -57,6 +62,16 @@ public class CommandHandler {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                return fullmap;
+            }
+            case TRANSFER_FILE: {
+                try {
+                    dos.writeUTF("File " + file_to_trans + " has been added to your storage");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                messages.add(file_to_trans + " " + ms.getCreationTime());
+                fullmap.put(name, messages);
                 return fullmap;
             }
             case QUIT:{

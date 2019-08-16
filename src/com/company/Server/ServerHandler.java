@@ -5,7 +5,6 @@ import com.company.util.JSONParser;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -14,6 +13,7 @@ import java.util.concurrent.Executors;
 public class ServerHandler {
 
     private static final int DEFAULT_NUMBER_THREADS = 10;
+    private static final int MAX_FILE_SIZE = 1022386;
 
     Map<String, ArrayList<String>> messages = Collections.synchronizedSortedMap(new TreeMap<>());
     ExecutorService executor;
@@ -58,7 +58,7 @@ public class ServerHandler {
                 }
             }
             System.out.println("Loaded data:");
-            messages.forEach((k,v) -> System.out.println(k+": " + Arrays.asList(v).toString()));
+            System.out.println(messages.toString());
         } catch (Exception e) {
             System.out.println("No data found. Creating an empty database");
         }
@@ -121,6 +121,7 @@ public class ServerHandler {
     public void serve(int port) throws InterruptedException{
             Runtime.getRuntime().addShutdownHook(new Thread(this::saveMessages));
             try (ServerSocket server = new ServerSocket(port)) {
+                System.out.println("Primary module launched");
                 while (!server.isClosed()) {
                     Socket client = server.accept();
                     System.out.print("Connection accepted.");
@@ -137,4 +138,27 @@ public class ServerHandler {
                 System.out.println("IO troubles");
             }
         }
+
+    void fileTransfer(int port){
+        try (ServerSocket server = new ServerSocket(port)){
+            System.out.println("File module launched");
+            while (!server.isClosed()) {
+                try {
+                    Socket client = server.accept();
+                    byte[] bytearray = new byte[MAX_FILE_SIZE];
+                    InputStream is = client.getInputStream();
+                    is.read(bytearray);
+                    String content = new String(bytearray);
+                    System.out.println(content);
+                    client.close();
+                } catch (Exception e){
+                    e.printStackTrace();
+                    System.out.println("Error during reading");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Secondary module crash");
+        }
+    }
 }
