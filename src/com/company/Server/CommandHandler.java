@@ -76,7 +76,7 @@ public class CommandHandler {
                     }
                     return fullmap;
                 }
-                messages.add(reservedMsg);
+                messages.add(reservedMsg + " " + ms.getCreationTime());
                 try {
                     dos.writeUTF("Message sent");
                 } catch (IOException e) {

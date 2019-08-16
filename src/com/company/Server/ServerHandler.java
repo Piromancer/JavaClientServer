@@ -2,16 +2,12 @@ package com.company.Server;
 
 import com.company.util.JSONParser;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,7 +15,7 @@ public class ServerHandler {
 
     private static final int DEFAULT_NUMBER_THREADS = 10;
 
-    Map<String, ArrayList<String>> messages = new TreeMap<>();
+    Map<String, ArrayList<String>> messages = Collections.synchronizedSortedMap(new TreeMap<>());
     ExecutorService executor;
 
     public ServerHandler(){
@@ -27,7 +23,45 @@ public class ServerHandler {
     }
 
     public ServerHandler(int nThreads){
+        loadMessages();
         executor = Executors.newFixedThreadPool(nThreads);
+    }
+
+    private void saveMessages(){
+        StringBuilder save = new StringBuilder();
+        messages.forEach((k,v) -> {
+            save.append(k);
+            save.append("\n");
+            v.forEach((ms) -> save.append(' ' + ms +'\n'));
+        });
+        try (FileWriter fw = new FileWriter("messages.txt")) {
+            fw.write(save.toString());
+            fw.flush();
+        } catch (IOException e) {
+            System.out.println("lacking /resources/messages.txt");
+        }
+    }
+
+    private void loadMessages(){
+        try {
+            String line;
+            Scanner fr = new Scanner(new File("messages.txt"));
+            String cur_owner = "";
+            while (fr.hasNext()){
+                line = fr.nextLine();
+                if (!line.startsWith(" ")){
+                    cur_owner = line;
+                    if(!messages.containsKey(cur_owner)) messages.put(cur_owner, new ArrayList<>());
+                }
+                else {
+                    if(messages.containsKey(cur_owner)) messages.get(cur_owner).add(line);
+                }
+            }
+            System.out.println("Loaded data:");
+            messages.forEach((k,v) -> System.out.println(k+": " + Arrays.asList(v).toString()));
+        } catch (Exception e) {
+            System.out.println("No data found. Creating an empty database");
+        }
     }
 
     private void serveClient(Socket client) throws IOException, InterruptedException{
@@ -85,7 +119,7 @@ public class ServerHandler {
     }
 
     public void serve(int port) throws InterruptedException{
-
+            Runtime.getRuntime().addShutdownHook(new Thread(this::saveMessages));
             try (ServerSocket server = new ServerSocket(port)) {
                 while (!server.isClosed()) {
                     Socket client = server.accept();

@@ -1,6 +1,27 @@
 package com.company.Server;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class Message {
+    private String owner;
+    private String text;
+    private Command command;
+    private String creationTime;
+
+    public Message(String owner, String text, Command command){
+        this.owner = owner;
+        this.text = text;
+        this.command = command;
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss"); //20 symbols with a space
+        creationTime = sdf.format(Calendar.getInstance().getTime());
+    }
+
+    public Message(){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+    };
+
+
     public String getOwner() {
         return owner;
     }
@@ -25,16 +46,11 @@ public class Message {
         this.command = command;
     }
 
-
-    private String owner;
-    private String text;
-    private Command command;
-
-    public Message(String owner, String text, Command command){
-            this.owner = owner;
-            this.text = text;
-            this.command = command;
+    public String getCreationTime() {
+        return creationTime;
     }
 
-    public Message(){};
+    public void setCreationTime(String creationTime) {
+        this.creationTime = creationTime;
+    }
 }

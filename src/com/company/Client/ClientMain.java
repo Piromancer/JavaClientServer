@@ -45,8 +45,7 @@ public class ClientMain {
                     String command = "";
                     do{
                         command = console_in.nextLine().trim();
-                        Command cm = Command.MESSAGE;
-                        int argument;
+                        Command cm;
                         if (command.startsWith(":delete")) cm = Command.DELETE;
                         else if (command.startsWith(":changeLogin")) cm = Command.CHANGE_LOGIN;
                         else if (command.startsWith(":quit")) cm = Command.CHANGE_LOGIN;
