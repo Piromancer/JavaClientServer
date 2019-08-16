@@ -6,5 +6,6 @@ public enum Command {
     CHANGE_LOGIN,
     QUIT,
     MESSAGE,
-    TRANSFER_FILE
+    TRANSFER_FILE,
+    HELP
 }

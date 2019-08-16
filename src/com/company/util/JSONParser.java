@@ -55,6 +55,7 @@ public class JSONParser {
                     case "QUIT": {result.setCommand(Command.QUIT); break;}
                     case "TRANSFER_FILE": {result.setCommand(Command.TRANSFER_FILE); break;}
                     case "MESSAGE": {result.setCommand(Command.MESSAGE); break;}
+                    case "HELP": {result.setCommand(Command.HELP);  break;}
                 }
             }
         }

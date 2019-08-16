@@ -57,7 +57,14 @@ public class ClientMain {
                         else if (command.startsWith(":changeLogin")) cm = Command.CHANGE_LOGIN;
                         else if (command.startsWith(":quit")) cm = Command.CHANGE_LOGIN;
                         else if (command.startsWith(":show")) cm = Command.SHOW;
-                        else if (command.startsWith(":transferFile")) cm = Command.TRANSFER_FILE;
+                        else if (command.startsWith(":help")) cm = Command.HELP;
+                        else if (command.startsWith(":transferFile")) {
+                            if(command.split(" ").length != 2) {
+                                System.out.println("No file selected");
+                                continue;
+                            }
+                            cm = Command.TRANSFER_FILE;
+                        }
                         else cm = Command.MESSAGE;
                         Message ms = new Message(clientName, command, cm);
                         oos.writeUTF(JSONParser.toJson(ms));

@@ -84,7 +84,7 @@ public class ServerHandler {
             }
             if (entry.equalsIgnoreCase(":changeLogin")) continue;
             if (Verifier.validLogin(entry)) {
-                out.writeUTF(entry + " logged in");
+                out.writeUTF(entry + " logged in. Type :help to receive a list of commands.");
                 if(!messages.containsKey(entry)) messages.put(entry, new ArrayList<>());
             } else {
                 out.writeUTF("Failed to login");
