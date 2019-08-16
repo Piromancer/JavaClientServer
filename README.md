@@ -1,4 +1,4 @@
-# JavaWebServer
+# JavaClientServer
 An Infotecs testing task
 
 Целевая платформа: Windows (кроссплатформенность будет плюсом)
