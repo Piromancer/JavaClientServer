@@ -36,27 +36,19 @@ public class JSONParser {
                 result.setText(cur_str);
             }
             if (temp.startsWith("\"owner\"")) {
-                String cur_str = temp.substring(8).replaceAll(COMA_RELACEMENT, ",");
+                String cur_str = temp.substring(8);
                 cur_str = cur_str.substring(1, cur_str.length()-1);
                 result.setOwner(cur_str);
             }
             if (temp.startsWith("\"creationTime\"")) {
-                String cur_str = temp.substring(15).replaceAll(COMA_RELACEMENT, ",");
+                String cur_str = temp.substring(15);
                 cur_str = cur_str.substring(1, cur_str.length()-1);
                 result.setCreationTime(cur_str);
             }
             if (temp.startsWith("\"command\"")) {
-                String cur_str = temp.substring(10).replaceAll(COMA_RELACEMENT, ",");
+                String cur_str = temp.substring(10);
                 cur_str = cur_str.substring(1, cur_str.length()-1);
-                switch (cur_str){
-                    case "SHOW": {result.setCommand(Command.SHOW); break;}
-                    case "DELETE": {result.setCommand(Command.DELETE); break;}
-                    case "CHANGE_LOGIN": {result.setCommand(Command.CHANGE_LOGIN); break;}
-                    case "QUIT": {result.setCommand(Command.QUIT); break;}
-                    case "TRANSFER_FILE": {result.setCommand(Command.TRANSFER_FILE); break;}
-                    case "MESSAGE": {result.setCommand(Command.MESSAGE); break;}
-                    case "HELP": {result.setCommand(Command.HELP);  break;}
-                }
+                result.setCommand(Command.fromString(cur_str));
             }
         }
         return result;

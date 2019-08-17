@@ -27,7 +27,8 @@ public class ServerHandler {
         executor = Executors.newFixedThreadPool(nThreads);
     }
 
-    private void saveMessages(){
+    void saveMessages(){
+        System.out.println("Save started");
         StringBuilder save = new StringBuilder();
         messages.forEach((k,v) -> {
             save.append(k);
@@ -38,8 +39,9 @@ public class ServerHandler {
             fw.write(save.toString());
             fw.flush();
         } catch (IOException e) {
-            System.out.println("lacking /resources/messages.txt");
+            System.out.println("Couldn't write to a file");
         }
+        System.out.println("Save completed");
     }
 
     private void loadMessages(){
@@ -54,7 +56,7 @@ public class ServerHandler {
                     if(!messages.containsKey(cur_owner)) messages.put(cur_owner, new ArrayList<>());
                 }
                 else {
-                    if(messages.containsKey(cur_owner)) messages.get(cur_owner).add(line);
+                    if(messages.containsKey(cur_owner)) messages.get(cur_owner).add(line.trim());
                 }
             }
             System.out.println("Loaded data:");
@@ -119,8 +121,8 @@ public class ServerHandler {
     }
 
     public void serve(int port) throws InterruptedException{
-            Runtime.getRuntime().addShutdownHook(new Thread(this::saveMessages));
             try (ServerSocket server = new ServerSocket(port)) {
+                Runtime.getRuntime().addShutdownHook(new Thread(this::saveMessages));
                 System.out.println("Primary module launched");
                 while (!server.isClosed()) {
                     Socket client = server.accept();
@@ -128,6 +130,7 @@ public class ServerHandler {
                     executor.execute(() -> {
                         try {
                             serveClient(client);
+                            saveMessages();
                         } catch (IOException | InterruptedException e) {
                             e.printStackTrace();
                         }

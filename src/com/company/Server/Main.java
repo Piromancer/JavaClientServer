@@ -15,8 +15,10 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException {
         ServerHandler server = new ServerHandler();
+        Runtime.getRuntime().addShutdownHook(new Thread(server::saveMessages));
         new Thread(() -> server.fileTransfer(PORT2)).start();
         server.serve(45777);
+        server.saveMessages();
 
 //        TreeMap<String, ArrayList<String>> messages = new TreeMap<>();
 //

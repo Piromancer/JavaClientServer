@@ -48,7 +48,7 @@ public class ClientMain {
                         command = console_in.nextLine().trim();
                         Command cm;
                         if (command.startsWith(":delete")) {
-                            if(command.split(" ").length != 2) {
+                            if(command.split("\\s+").length != 2) {
                                 System.out.println("No delete argument found");
                                 continue;
                             }
@@ -56,10 +56,12 @@ public class ClientMain {
                         }
                         else if (command.startsWith(":changeLogin")) cm = Command.CHANGE_LOGIN;
                         else if (command.startsWith(":quit")) cm = Command.CHANGE_LOGIN;
+                        else if (command.startsWith(":showAllName")) cm = Command.SHOW_ALL_NAME;
+                        else if (command.startsWith(":showAllDate")) cm = Command.SHOW_ALL_DATE;
                         else if (command.startsWith(":show")) cm = Command.SHOW;
                         else if (command.startsWith(":help")) cm = Command.HELP;
                         else if (command.startsWith(":transferFile")) {
-                            if(command.split(" ").length != 2) {
+                            if(command.split("\\s+").length != 2) {
                                 System.out.println("No file selected");
                                 continue;
                             }
@@ -69,7 +71,7 @@ public class ClientMain {
                         Message ms = new Message(clientName, command, cm);
                         oos.writeUTF(JSONParser.toJson(ms));
                         if (command.startsWith(":transferFile")) {
-                            File f = new File(command.split(" ")[1].trim());
+                            File f = new File(command.split("\\s+")[1].trim());
                             FileTransferer.transferFile(45778, f);
                         }
                         System.out.println(ois.readUTF());

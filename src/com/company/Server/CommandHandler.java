@@ -4,12 +4,13 @@ package com.company.Server;
 import com.company.Client.FileTransferer;
 
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.TreeMap;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class CommandHandler {
     private Map<String, ArrayList<String>> fullmap;
@@ -22,8 +23,8 @@ public class CommandHandler {
     public Map<String, ArrayList<String>> resolve(Message ms, DataOutputStream dos){
         int pos = -1;
         String file_to_trans = "";
-        if(ms.getText().split(" ").length == 2 && (new Scanner(ms.getText().split(" ")[1]).hasNextInt())) pos = Integer.parseInt(ms.getText().split(" ")[1]);
-        else if(ms.getText().split(" ").length == 2 && ms.getText().startsWith(":transferFile")) {file_to_trans = ms.getText().split(" ")[1];}
+        if(ms.getText().split("\\s+").length == 2 && (new Scanner(ms.getText().split(" ")[1]).hasNextInt())) pos = Integer.parseInt(ms.getText().split("\\s+")[1]);
+        else if(ms.getText().split("\\s+").length == 2 && ms.getText().startsWith(":transferFile")) {file_to_trans = ms.getText().split("\\s+")[1];}
         String reservedMsg = ms.getText();
         Command command = ms.getCommand();
         switch (command){
@@ -86,6 +87,8 @@ public class CommandHandler {
                 StringBuilder sb = new StringBuilder();
                 sb.append("You can use commands by typing :{commandName} [argument]\n");
                 sb.append(":show gives you the history of your messages and files sent\n");
+                sb.append(":showAllName gives you the history of your messages and files sent sorted by owner name\n");
+                sb.append(":showAllDate gives you the history of your messages and files sent sorted by creation time\n");
                 sb.append(":delete [arg] lets you remove an entry from your history. Argument is an ID of your message, which you can find in :show command\n");
                 sb.append(":changeLogin lets you leave your account and enter another one\n");
                 sb.append(":transferFile lets you load a file to a server. File name will be stored in your messages list\n");
@@ -95,6 +98,45 @@ public class CommandHandler {
                     dos.writeUTF(sb.toString());
                 } catch (IOException e){
                     System.out.println("Couldn't receive connection");
+                }
+                return fullmap;
+            }
+            case SHOW_ALL_NAME:{
+                String data = "";
+                StringBuilder res = new StringBuilder();
+                fullmap.forEach((k,v) -> {
+                    v.forEach((val) -> res.append("Owner - " + k + " | Message - " + val +'\n'));
+                });
+                try {
+                    dos.writeUTF(res.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return fullmap;
+            }
+            case SHOW_ALL_DATE:{
+                ArrayList<String> list = new ArrayList<>();
+                fullmap.forEach((k,v) -> v.forEach((val) -> list.add("Owner - " + k + " | Message - " + val)));
+                list.sort((str1, str2) -> {
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+                    str1 = str1.substring(str1.length()-20);
+                    str2 = str2.substring(str2.length()-20);
+                    try {
+                        Date date1 = sdf.parse(str1);
+                        Date date2 = sdf.parse(str2);
+                        return date1.compareTo(date2);
+                    } catch (ParseException pe){
+                        System.out.println("Parse exception");
+                    }
+                    System.out.println("Error occurred while comparing dates");
+                    return -1;
+                });
+                StringBuilder res = new StringBuilder();
+                list.forEach((v) -> res.append(v).append('\n'));
+                try {
+                    dos.writeUTF(res.toString());
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
                 return fullmap;
             }
