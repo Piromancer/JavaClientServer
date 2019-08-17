@@ -151,7 +151,7 @@ public class ServerHandler {
                     byte[] bytearray = new byte[MAX_FILE_SIZE];
                     InputStream is = client.getInputStream();
                     is.read(bytearray);
-                    String content = new String(bytearray);
+                    String content = new String(bytearray).trim();
                     System.out.println(content);
                     client.close();
                 } catch (Exception e){

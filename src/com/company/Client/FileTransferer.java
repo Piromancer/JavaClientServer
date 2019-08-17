@@ -18,8 +18,7 @@ public class FileTransferer {
             os.write(bytearray, 0, bytearray.length);
             os.flush();
         } catch (Exception e) {
-            e.printStackTrace();
-            //System.out.println("File transfer unavailable");
+            System.out.println("Not able to transfer file");
         }
 
     }

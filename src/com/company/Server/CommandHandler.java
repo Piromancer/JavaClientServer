@@ -23,7 +23,7 @@ public class CommandHandler {
     public Map<String, ArrayList<String>> resolve(Message ms, DataOutputStream dos){
         int pos = -1;
         String file_to_trans = "";
-        if(ms.getText().split("\\s+").length == 2 && (new Scanner(ms.getText().split(" ")[1]).hasNextInt())) pos = Integer.parseInt(ms.getText().split("\\s+")[1]);
+        if(ms.getText().split("\\s+").length == 2 && (new Scanner(ms.getText().split("\\s+")[1]).hasNextInt())) pos = Integer.parseInt(ms.getText().split("\\s+")[1]);
         else if(ms.getText().split("\\s+").length == 2 && ms.getText().startsWith(":transferFile")) {file_to_trans = ms.getText().split("\\s+")[1];}
         String reservedMsg = ms.getText();
         Command command = ms.getCommand();
@@ -92,6 +92,7 @@ public class CommandHandler {
                 sb.append(":delete [arg] lets you remove an entry from your history. Argument is an ID of your message, which you can find in :show command\n");
                 sb.append(":changeLogin lets you leave your account and enter another one\n");
                 sb.append(":transferFile lets you load a file to a server. File name will be stored in your messages list\n");
+                sb.append("When using :transferFile on Windows use the following syntax - [Disc]:/[absolute_path(separator being '/')]\n");
                 sb.append(":quit lets you quit the application\n");
                 sb.append("Messages can't start with an ':' symbol. Any other messages will be stored in our database.\n");
                 try{

@@ -54,13 +54,13 @@ public class ClientMain {
                             }
                             cm = Command.DELETE;
                         }
-                        else if (command.startsWith(":changeLogin")) cm = Command.CHANGE_LOGIN;
-                        else if (command.startsWith(":quit")) cm = Command.CHANGE_LOGIN;
-                        else if (command.startsWith(":showAllName")) cm = Command.SHOW_ALL_NAME;
-                        else if (command.startsWith(":showAllDate")) cm = Command.SHOW_ALL_DATE;
-                        else if (command.startsWith(":show")) cm = Command.SHOW;
-                        else if (command.startsWith(":help")) cm = Command.HELP;
-                        else if (command.startsWith(":transferFile")) {
+                        else if (command.equals(":changeLogin")) cm = Command.CHANGE_LOGIN;
+                        else if (command.equals(":quit")) cm = Command.CHANGE_LOGIN;
+                        else if (command.equals(":showAllName")) cm = Command.SHOW_ALL_NAME;
+                        else if (command.equals(":showAllDate")) cm = Command.SHOW_ALL_DATE;
+                        else if (command.equals(":show")) cm = Command.SHOW;
+                        else if (command.equals(":help")) cm = Command.HELP;
+                        else if (command.startsWith(":transferFile ")) {
                             if(command.split("\\s+").length != 2) {
                                 System.out.println("No file selected");
                                 continue;
